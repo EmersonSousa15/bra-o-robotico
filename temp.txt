@@ -1,0 +1,194 @@
+#include <GL/glut.h>
+
+// Ângulos de rotação para cada parte
+float baseAngle = 0.0f;
+float shoulderAngle = 0.0f;
+float elbowAngle = 0.0f;
+float wristAngle = 0.0f;
+float wristAngleRotation = 0.0f;
+float fingerAngles[5] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; // Ângulos para os cinco dedos
+
+void init()
+{
+   glEnable(GL_DEPTH_TEST);
+}
+
+// Função para desenhar um dedo
+void drawFinger(float offsetX, float offsetY, float r, float g, float b)
+{
+   glPushMatrix();
+   glTranslatef(offsetX, offsetY, 0.0f); // Posição do dedo em relação ao pulso
+   glColor3f(r, g, b);
+   glRotatef(fingerAngles[(int)offsetX], 0.0, 0.0, 1.0); // Rotação do dedo
+   glTranslatef(0.3, 0.0, 0.0);                          // Centraliza o dedo
+   glPushMatrix();
+   glScalef(0.6, 0.07, 0.1); // Forma do dedo
+   glutSolidCube(1.0);
+   glPopMatrix();
+   glPopMatrix();
+}
+
+void display()
+{
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   glLoadIdentity();
+
+   // Ajuste da câmera
+   gluLookAt(0.0, 0.0, 10.0, // Posição da câmera
+             0.0, 0.0, 0.0,  // Ponto para onde a câmera está olhando
+             0.0, 1.0, 0.0); // Vetor "up"
+
+   // Base fixa
+   glPushMatrix();
+   glRotatef(baseAngle, 0.0, 1.0, 0.0); // Rotação da base
+   glPushMatrix();
+   glScalef(1.5, 0.2, 1.5); // Formato da base
+   glutSolidCube(1.0);
+   glPopMatrix();
+
+   // Articulação do Ombro
+   glPushMatrix();
+   glTranslatef(0.0, 0.6, 0.0);             // Elevação do ombro acima da base
+   glRotatef(shoulderAngle, 0.0, 0.0, 1.0); // Rotação no ombro
+   glTranslatef(1.0, 0.0, 0.0);             // Move para o meio do braço superior
+   glPushMatrix();
+   glScalef(2.0, 0.5, 0.5); // Forma do braço superior
+   glutSolidCube(1.0);
+   glPopMatrix();
+
+   // Articulação do Cotovelo
+   glTranslatef(1.0, 0.0, 0.0);          // Move para o final do braço superior
+   glRotatef(elbowAngle, 0.0, 0.0, 1.0); // Rotação no cotovelo
+   glTranslatef(1.0, 0.0, 0.0);          // Move para o meio do braço inferior
+   glPushMatrix();
+   glScalef(2.0, 0.5, 0.5); // Forma do braço inferior
+   glutSolidCube(1.0);
+   glPopMatrix();
+
+   // Articulação do Pulso
+   glTranslatef(1.0, 0.0, 0.0);                  // Move para o final do braço inferior
+   glRotatef(wristAngle, 0.0, 1.0, 0.0);         // Rotação no pulso
+   glRotatef(wristAngleRotation, 1.0, 0.0, 0.0); // Rotação no angulo da mão
+   glPushMatrix();
+   glScalef(0.5, 0.5, 0.5); // Forma do pulso
+   glutSolidCube(1.0);
+   glPopMatrix();
+
+   // Mão com 5 dedos
+   drawFinger(0.2, -0.2, 0.0, 0.0, 1.0);  // Dedo 1 - Indicador
+   drawFinger(0.2, -0.07, 0.0, 1.0, 0.0); // Dedo 2- Dedão
+   drawFinger(0.2, 0.05, 1.0, 0.0, 0.0);  // Dedo 2 - Médio
+   drawFinger(0.2, 0.15, 1.0, 0.0, 1.0);  // Dedo 3 - Anelar
+   drawFinger(-0.1, 0.3, 0.0, 1.0, 1.0);  // Dedo 4 - Mínimo
+   glPopMatrix();
+   glPopMatrix();
+
+   glutSwapBuffers();
+}
+
+void reshape(int w, int h)
+{
+   glViewport(0, 0, w, h);
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   gluPerspective(45.0, (float)w / (float)h, 1.0, 200.0);
+   glMatrixMode(GL_MODELVIEW);
+}
+
+void keyboard(unsigned char key, int x, int y)
+{
+   switch (key)
+   {
+   case 'q': // Rotacionar mão para frente
+      wristAngleRotation += 5.0f;
+      break;
+   case 'Q': // Rotacionar mão para trás
+      wristAngleRotation -= 5.0f;
+      break;
+   case 'b': // Rotacionar base no sentido horário
+      baseAngle += 5.0f;
+      if (baseAngle > 360.0f)
+         baseAngle -= 360.0f;
+      break;
+   case 'B': // Rotacionar base no sentido anti-horário
+      baseAngle -= 5.0f;
+      if (baseAngle < 0.0f)
+         baseAngle += 360.0f;
+      break;
+   case 's': // Rotacionar ombro para frente
+      shoulderAngle += 5.0f;
+      if (shoulderAngle > 360.0f)
+         shoulderAngle -= 360.0f;
+      break;
+   case 'S': // Rotacionar ombro para trás
+      shoulderAngle -= 5.0f;
+      if (shoulderAngle < 0.0f)
+         shoulderAngle += 360.0f;
+      break;
+   case 'e': // Rotacionar cotovelo para frente
+      elbowAngle += 5.0f;
+      if (elbowAngle > 360.0f)
+         elbowAngle -= 360.0f;
+      break;
+   case 'E': // Rotacionar cotovelo para trás
+      elbowAngle -= 5.0f;
+      if (elbowAngle < 0.0f)
+         elbowAngle += 360.0f;
+      break;
+   case 'w': // Rotacionar pulso para frente
+      wristAngle += 5.0f;
+      if (wristAngle > 360.0f)
+         wristAngle -= 360.0f;
+      break;
+   case 'W': // Rotacionar pulso para trás
+      wristAngle -= 5.0f;
+      if (wristAngle < 0.0f)
+         wristAngle += 360.0f;
+      break;
+   case '0': // Abaixa todos os dedos
+      for (int i = 0; i < 5; ++i)
+         fingerAngles[i] = 0.0f;
+      break;
+   case '1': // Levanta o polegar
+      fingerAngles[0] = 45.0f;
+      break;
+   case '2': // Levanta o polegar e o indicador
+      fingerAngles[0] = 45.0f;
+      fingerAngles[1] = 45.0f;
+      break;
+   case '3': // Levanta polegar, indicador e médio
+      fingerAngles[0] = 45.0f;
+      fingerAngles[1] = 45.0f;
+      fingerAngles[2] = 45.0f;
+      break;
+   case '4': // Levanta até o anelar
+      fingerAngles[0] = 45.0f;
+      fingerAngles[1] = 45.0f;
+      fingerAngles[2] = 45.0f;
+      fingerAngles[3] = 45.0f;
+      break;
+   case '5': // Levanta todos os dedos
+      for (int i = 0; i < 5; ++i)
+         fingerAngles[i] = 45.0f;
+      break;
+   case 27: // ESC para sair
+      exit(0);
+      break;
+   }
+   glutPostRedisplay();
+}
+
+int main(int argc, char **argv)
+{
+   glutInit(&argc, argv);
+   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+   glutInitWindowSize(800, 600);
+   glutCreateWindow("Braço Robótico com Mão e Dedos - Contagem");
+
+   init();
+   glutDisplayFunc(display);
+   glutReshapeFunc(reshape);
+   glutKeyboardFunc(keyboard);
+   glutMainLoop();
+   return 0;
+}
