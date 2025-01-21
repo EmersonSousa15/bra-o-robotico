@@ -2,25 +2,19 @@
 #include <iostream> // Incluindo o cabeçalho necessário
 #include <cmath>
 
-
 float baseAngle = 0.0f;
 float shoulderAngle = 90.0f;
 float elbowAngle = 90.0f;
 
-float wristAngleX = 0.0f; 
-float wristAngleY = 0.0f;
-float wristAngleZ = 0.0f;
+float wristAngleX = 0.0f;
 
 float gripAngle = 0.0f;
 
-
-float elbowExtension = 0.0f;           
-const float elbowExtensionMin = -1.3f; 
-const float elbowExtensionMax = 2.0f; 
-
+float elbowExtension = 0.0f;
+const float elbowExtensionMin = -1.3f;
+const float elbowExtensionMax = 2.0f;
 
 float forearmRotationAngle = 0.0f;
-
 
 float ballPosition[3] = {1.4f, 0.0f, 0.0f};
 
@@ -30,7 +24,6 @@ bool isBallFalling = false;
 
 const float gravity = -0.001f;
 const float floorHeight = -10.0f;
-
 
 void init()
 {
@@ -130,8 +123,6 @@ void display()
    // Mão
    glTranslatef(2.0, 0.0, 0.0);
    glRotatef(wristAngleX, 1.0, 0.0, 0.0);
-   glRotatef(wristAngleY, 0.0, 1.0, 0.0);
-   glRotatef(wristAngleZ, 0.0, 0.0, 1.0);
    glColor3f(0.7, 0.7, 0.7);
    glPushMatrix();
    glutSolidSphere(0.5, 20, 20);
@@ -203,13 +194,7 @@ void keyboard(unsigned char key, int x, int y)
       wristAngleX += 5.0f;
       break;
    case 'Q':
-      wristAngleY += 5.0f;
-      break;
-   case 'w':
-      wristAngleZ += 5.0f;
-      break;
-   case 'W':
-      wristAngleZ -= 5.0f;
+      wristAngleX -= 5.0f;
       break;
 
       // OMBRO
@@ -231,11 +216,11 @@ void keyboard(unsigned char key, int x, int y)
          elbowAngle -= 5.0f;
       break;
 
-   case 'f': 
+   case 'f':
       if (elbowExtension < elbowExtensionMax)
          elbowExtension += 0.1f;
       break;
-   case 'F': 
+   case 'F':
       if (elbowExtension > elbowExtensionMin)
          elbowExtension -= 0.1f;
       break;
