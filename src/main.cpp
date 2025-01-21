@@ -1,5 +1,4 @@
 #include <GL/glut.h>
-#include <iostream> // Incluindo o cabeçalho necessário
 #include <cmath>
 
 float baseAngle = 0.0f;
