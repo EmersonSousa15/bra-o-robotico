@@ -1,5 +1,4 @@
 #include <GL/glut.h>
-#include <iostream> // Incluindo o cabeçalho necessário
 #include <cmath>
 
 float baseAngle = 0.0f;
@@ -79,7 +78,7 @@ void display()
    glLoadIdentity();
 
    // Ajuste da câmera
-   gluLookAt(0.0, 6.0, 20.0,
+   gluLookAt(0.0, 10.0, 20.0,
              0.0, 0.0, 0.0,
              0.0, 1.0, 0.0);
 
@@ -92,16 +91,31 @@ void display()
    glutSolidCube(1.0);
    glPopMatrix();
 
+   // Base do braço
+   glPushMatrix();
+   glRotatef(forearmRotationAngle, 0.0, 1.0, 0.0);
+   glColor3f(1.0, 1.0, 1.0);
+   glPushMatrix();
+   glScalef(1.0, 0.1, 1.0);
+   glutSolidCube(1.0);
+   glPopMatrix();
+
    // Ombro
    glPushMatrix();
    glTranslatef(0.0, 0.3, 0.0);
    glRotatef(shoulderAngle, 0.0, 0.0, 1.0);
-   glRotatef(forearmRotationAngle, 1.0, 0.0, 0.0);
    glColor3f(0.5, 0.5, 0.5);
    glTranslatef(1.5, 0.0, 0.0);
    glPushMatrix();
    glScalef(4.0, 0.6, 0.6);
    glutSolidCube(1.0);
+   glPopMatrix();
+
+   // Articulação do ombro
+   glPushMatrix();
+   glTranslatef(-1.7, 0.0, 0.0);
+   glColor3f(0.7, 0.7, 0.7);
+   glutSolidSphere(0.5, 20, 20);
    glPopMatrix();
 
    // Cotovelo
@@ -114,6 +128,7 @@ void display()
    glutSolidCube(1.0);
    glPopMatrix();
 
+   // Articulação do cotovelo
    glPushMatrix();
    glTranslatef(-2.01, 0.0, 0.0);
    glColor3f(0.7, 0.7, 0.7);
@@ -162,6 +177,7 @@ void display()
    }
 
    glPopMatrix();
+   glPopMatrix();
 
    glPopMatrix();
 
@@ -198,6 +214,15 @@ void keyboard(unsigned char key, int x, int y)
       break;
 
       // OMBRO
+   case 'a':
+      if (shoulderAngle < 150.0f)
+         shoulderAngle += 5.0f;
+         elbowAngle -= 5.0f;
+      break;
+   case 'A':
+      if (shoulderAngle > 20.0f)
+         shoulderAngle -= 5.0f;
+         elbowAngle += 5.0f;
       break;
    case 's':
       forearmRotationAngle += 5.0f;
@@ -210,6 +235,7 @@ void keyboard(unsigned char key, int x, int y)
    case 'd':
       if (elbowAngle < 90.0f)
          elbowAngle += 5.0f;
+         
       break;
    case 'D':
       if (elbowAngle > -90.0f)
